@@ -7,7 +7,7 @@ Compute MSE of predictions in a moving window
 This function is used in \code{cv.Breg} when \code{type = "cv"}. Estimation an VAR(1) model in a moving window and make a 1-step ahead prediction. The MSE of prediciton is computed.
 }
 \usage{
-cvCom(x,lambda,gamma,alpha,T,width,k,Time)
+cvCom(x,lambda,gamma,alpha,T,width,Time)
 }
 
 %- maybe also 'usage' for other objects documented here.
@@ -16,7 +16,11 @@ cvCom(x,lambda,gamma,alpha,T,width,k,Time)
 
   \item{width}{Bandwidth of the moving window.}
 
-  \item{...}
+  \item{lambda}{See \code{Breg}.}
+  \item{gamma}{See \code{Breg}.}
+  \item{alpha}{See \code{Breg}.}
+  \item{T}{Number of observations.}
+  \item{Time}{See \code{Breg}.}
 }
 
 \seealso{

@@ -1,5 +1,6 @@
 library(glmnet)
 library(spcov)
+library(Matrix)
 
 # Sigma_inverse_half ------------------
 Sigma_inverse_half <- function(sigma)
@@ -14,7 +15,7 @@ Sigma_inverse_half <- function(sigma)
 }
 
 # Get_coef ------------------
-coef.Breg <- function(model,lambda,X,Y,type="var")
+coef_Breg <- function(model,lambda,X,Y,type="var")
 {
   # recover coefficient and residual covariance from glmnet model
   if(type == "var")
@@ -42,8 +43,8 @@ coef.Breg <- function(model,lambda,X,Y,type="var")
 
 # var.estimation ------------------
 Breg <- function(x,y=NULL,lambda,gamma,
-                     alpha=1,type = "var",
-                     tol=10^-7,Time=10,r=10^-14)
+                 alpha=1,type = "var",
+                 tol=10^-7,Time=10,r=10^-14,step.size=10^3)
 {
   # estimate beta and sigma with fixed tune parameters
   # type: var, sur
@@ -68,7 +69,7 @@ Breg <- function(x,y=NULL,lambda,gamma,
     m = dim(y)[2]
     y.mean = colMeans(y)
     y = sweep(y,2,y.mean)
-    X = bdiag(rep(list(x),m))
+    X = Matrix::bdiag(rep(list(x),m))
     Y = c(y)
   }
 
@@ -98,7 +99,7 @@ Breg <- function(x,y=NULL,lambda,gamma,
     {
       I = diag(rep(1,times=T-1))
       newX = kronecker(X,sigma_half)
-      newY = kronecker(It,sigma_half) %*% Y
+      newY = kronecker(I,sigma_half) %*% Y
     }
 
     if(type == "sur")
@@ -109,10 +110,10 @@ Breg <- function(x,y=NULL,lambda,gamma,
     }
 
     # estimate beta
-    model = glmnet(newX,newY,lambda=l,alpha=alpha,intercept=FALSE)
+    model = glmnet::glmnet(newX,newY,lambda=l,alpha=alpha,intercept=FALSE)
 
     # get coefficients
-    res_1 = coef.Breg(model,lambda,X,Y,type=type)
+    res_1 = coef_Breg(model,lambda,X,Y,type=type)
     beta_temp = res_1$beta
     sigma_temp = res_1$recov
 
@@ -125,13 +126,13 @@ Breg <- function(x,y=NULL,lambda,gamma,
       if(rcond(corr)<r)
       {
         print("residual correlation matrix is singular!\n")
-        exit()
+        break
       }
 
       penalty = gamma - diag(gamma,k)
-      cor_temp = spcov(diag(diag(corr)),corr,lambda = penalty,
+      cor_temp = spcov::spcov(diag(diag(corr)),corr,lambda = penalty,
                    step.size = step.size)
-      sigma_temp = half_var %*% temp$Sigma %*% half_var
+      sigma_temp = half_var %*% cor_temp$Sigma %*% half_var
     }
 
     change.beta = norm(beta-beta_temp,type="M")

@@ -1,4 +1,5 @@
-\name{coef.Breg}
+\name{coef_Breg}
+\alias{coef_Breg}
 \alias{coef.Breg}
 \title{
 Extract VAR(1) and SUR coefficient and residual covariance from glmnet model
@@ -7,7 +8,7 @@ Extract VAR(1) and SUR coefficient and residual covariance from glmnet model
 This function extracts the coefficient matrix \eqn{\beta} and residual covariance matrix \eqn{\Sigma} of VAR(1) and SUR model from an \code{glmnet} object.
 }
 \usage{
-coef.Breg(model,lambda,X,Y,type)
+coef_Breg(model,lambda,X,Y,type="var")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,6 +31,6 @@ coef.Breg(model,lambda,X,Y,type)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{coef.glmnet}, \code{Breg}
+\link{coef.glmnet}, \link{Breg}
 }
 

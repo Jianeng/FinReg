@@ -9,7 +9,8 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
   k = dim(x)[2]
   m = dim(y)[2]
   x.mean = colMeans(x)
-  y.mean = colMeans(y)
+  if(!is.null(y))
+    y.mean = colMeans(y)
 
   # result format setting
   if(p.type == "coef")
@@ -54,7 +55,7 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
         fit = Breg(x = x,
                        lambda = lambda[i],gamma = gamma,
                        alpha = alpha,Time = Time)
-        path_data[i,] = fit$beta[1,j]
+        path_data[i,] = fit$beta[1,]
       }
     }
 
@@ -71,7 +72,7 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
 
     if(r.type == "group")
     {
-      model = glmnet(x,y,lambda = lambda,family = "mgaussian",alpha=alpha)
+      model = glmnet::glmnet(x,y,lambda = lambda,family = "mgaussian",alpha=alpha)
       for(i in 1:m)
         path_data[,1:k+(i-1)*k] = as.matrix(t(model$beta[[i]]))
     }
@@ -104,9 +105,9 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
 
     if(r.type == "group")
     {
-      model = glmnet(x,y,lambda = lambda,family = "mgaussian",alpha=alpha)
+      model = glmnet::glmnet(x,y,lambda = lambda,family = "mgaussian",alpha=alpha)
       prediction = predict(model,newx = t(x[T,]),s=lambda)
-      dim(prediction) = c(m,N)
+      dim(prediction) = c(m,N.l)
       path_data = prediction
     }
 
@@ -139,12 +140,12 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
 
     if(r.type == "group")
     {
-      model = glmnet(x,y,lambda = 0,family = "mgaussian")
+      model = glmnet::glmnet(x,y,lambda = 0,family = "mgaussian")
       res = y - predict(model,newx = x, s = 0)[,,1]
       resid_cov = var(matrix(res,ncol=m))
       for(i in 1:N.g)
       {
-        fit = spcov(diag(diag(resid_cov)),resid_cov,step.size=10,
+        fit = spcov::spcov(diag(diag(resid_cov)),resid_cov,step.size=10,
                       thr.inner=10^-7,lambda = gamma[i]-diag(gamma[i],m))
         path_data[,,i] = cov2cor(fit$Sigma)
       }
@@ -179,12 +180,12 @@ path <- function(x,y=NULL,lambda,gamma,r.type = "var",p.type = "coef",alpha=1,Ti
 
     if(r.type == "group")
     {
-      model = glmnet(x,y,lambda = 0,family = "mgaussian")
+      model = glmnet::glmnet(x,y,lambda = 0,family = "mgaussian")
       res = y - predict(model,newx = x, s = 0)[,,1]
       resid_cov = var(matrix(res,ncol=m))
       for(i in 1:N.g)
       {
-        fit = spcov(diag(diag(resid_cov)),resid_cov,step.size=10,
+        fit = spcov::spcov(diag(diag(resid_cov)),resid_cov,step.size=10,
                     thr.inner=10^-7,lambda = gamma[i]-diag(gamma[i],m))
         path_data[i,]=(fit$beta%*%t(chol(fit$sigma)))[1,]
       }

@@ -2,15 +2,15 @@
 cvCom <- function(x,lambda,gamma,alpha,T,width,Time)
 {
   L = T-width
-  predition = rep(NA,L)
+  prediction = rep(NA,L)
 
   for(t in 1:L)
   {
     newx = x[t:(t+width-1),]
     beta = Breg(x = newx,
-                    lambda = lambda,gamma = gamma,
-                    alpha = alpha,Time = Time)$beta
-    prediction[i] = mean(newx[,1]) + beta[1,]%*%(newx[width,]-colMeans(newx))
+                lambda = lambda,gamma = gamma,
+                alpha = alpha,Time = Time)$beta
+    prediction[t] = mean(newx[,1]) + beta[1,]%*%(newx[width,]-colMeans(newx))
   }
 
   mean((x[(1+width):T,1] - prediction)^2)
@@ -20,8 +20,8 @@ cvCom <- function(x,lambda,gamma,alpha,T,width,Time)
 icCom <- function(x,type,lambda,gamma,alpha,T,Time)
 {
   beta = Breg(x = x,
-                  lambda = lambda,gamma = gamma,
-                  alpha=alpha,Time=Time)$beta
+              lambda = lambda,gamma = gamma,
+              alpha=alpha,Time=Time)$beta
   x.mean = colMeans(x)
   prediction = (x[1:(T-1),] - x.mean)%*%beta[1,] + x.mean[1]
 
@@ -34,7 +34,7 @@ icCom <- function(x,type,lambda,gamma,alpha,T,Time)
 }
 
 # cv.map -----
-cv.Breg <- function(x,alpha=1,type="cv",width=NULL,lambda,gamma,tol=10^-3,Time=30)
+cv_Breg <- function(x,alpha=1,type="cv",width=NULL,lambda,gamma,tol=10^-3,Time=30)
 {
   # find tune parameters by cross-validation
   # width: width of the moving window
