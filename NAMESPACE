@@ -1,0 +1,8 @@
+export(Breg)
+export(coef.Breg)
+export(cv.Breg)
+export(icCom)
+export(cvCom)
+export(path)
+importFrom(glmnet,glmnet)
+importFrom(spcov,spcov)
