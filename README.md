@@ -9,7 +9,8 @@ Regularizing Bayesian Predictive Regressions
 # Author: 
 Guanhao Feng, Nicholas G. Polson
 # Maintainer: 
-Jianeng Xu <jianeng@uchicago.edu>
+Jianeng Xu 
+<jianeng@uchicago.edu>
 # Depends: 
 glmnet, spcov, Matrix
 # Description: 
